@@ -20,7 +20,6 @@
 
 
 <script type="text/javascript" _custom_script="">(function() {
-  const totalMgEl = document.querySelector("[_total_mg]");
   let state = localStorage.getItem('_state');
   if (state) {
     try {
@@ -35,5 +34,7 @@
     };
     localStorage.setItem("_state", JSON.stringify(state));
   }
-  console.log(state);
+  // Initialize the _total_mg component
+  const totalMgEl = document.querySelector("[_total_mg]");
+  totalMgEl.textContent = state.totalMg + "mg";
 })();</script></body>
