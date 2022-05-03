@@ -46,7 +46,7 @@
   function consumeCaffeine(amount) {
     window._state.history.push({
       origAmount: amount,
-      currentAmount: amount
+      currentAmount: amount,
       time: Number(new Date()),
     });
     saveState();
