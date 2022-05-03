@@ -19,4 +19,24 @@
 </div>
 
 
-</body>
+<script type="text/javascript" _custom_script="">(function() {
+  let state = {
+    caffeineMg: 0,
+  };
+  const totalMg = document.querySelector("[_total_mg]");
+  let state = localStorage.getItem('_state');
+  if (state) {
+    try {
+      state = JSON.parse(state);
+    } catch(err) {
+      console.error("Error loading state: " + err);
+      throw err;
+    }
+  } else {
+    state = {
+      totalMg: 0,
+    };
+    localStorage.setItem("_state", JSON.stringify(state));
+  }
+  console.log({totalMg});
+})();</script></body>
