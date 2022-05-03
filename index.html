@@ -23,7 +23,13 @@
   let state = localStorage.getItem('_state');
   function saveState() {
     localStorage.setItem("_state", JSON.stringify(state));
-  }  
+  }
+  window._resetState = function () {
+    state = {
+      totalMg: 0,
+      history: [],
+    };
+  }
   if (state) {
     try {
       state = JSON.parse(state);
@@ -34,21 +40,27 @@
   } else {
     state = {
       totalMg: 0,
+      
     };
     saveState();
   }
   // Initialize the _total_mg component
   const totalMgEl = document.querySelector("[_total_mg]");
-  function setTotalMg(amount) {
-    state.totalMg = amount;
+  function consumeCaffeine(amount) {
+    state.history.push({
+      amount,
+      time: Number(new Date()),
+    });
+    state.totalMg = state.history.reduce((sum, hist) => sum + hist.amount, 0);
     saveState();
     totalMgEl.textContent = state.totalMg + "mg";
   }
-  setTotalMg(state.totalMg);
+  consumeCaffeine(state.totalMg);
   // Initialize the caffeine add button component
   const addCaffeineBtn = document.querySelector("[_add_caffeine_btn]");
   addCaffeineBtn.addEventListener('click', function (ev) {
     // Increment total mg by 5
-    setTotalMg(state.totalMg + 5);
+    consumeCaffeine(5);
   });
+  // Decrement caffeine level based on half-life
 })();</script></body>
