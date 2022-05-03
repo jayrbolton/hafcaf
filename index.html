@@ -21,6 +21,9 @@
 
 <script type="text/javascript" _custom_script="">(function() {
   let state = localStorage.getItem('_state');
+  function saveState() {
+    localStorage.setItem("_state", JSON.stringify(state));
+  }  
   if (state) {
     try {
       state = JSON.parse(state);
@@ -32,9 +35,14 @@
     state = {
       totalMg: 0,
     };
-    localStorage.setItem("_state", JSON.stringify(state));
+    saveState();
   }
   // Initialize the _total_mg component
   const totalMgEl = document.querySelector("[_total_mg]");
-  totalMgEl.textContent = state.totalMg + "mg";
+  function setTotalMg(amount) {
+    state.totalMg = amount;
+    saveState();
+    totalMgEl.textContent = state.totalMg + "mg";
+  }
+  setTotalMg(state.totalMg);
 })();</script></body>
