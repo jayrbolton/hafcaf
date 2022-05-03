@@ -16,27 +16,7 @@
 
   <div style="font-size: 2.5rem;padding: 1rem;margin: 1rem;"><button style="background: #444;color: white;font-size: 2rem;padding: 1rem;border: 1px solid white;outline: none;cursor: pointer;">+ Record new caffeine consumption</button></div><div style="font-size: 2.5rem;padding: 1rem;">Current caffeine level:</div><div _total_mg="" style="font-size: 4rem;padding: 1rem;font-weight: bold;">0mg</div>
 
-</div><script type="text/javascript" _custom_script="">(function() {
-  const state = {
-    caffeineMg: 0,
-  };
-  const totalMg = document.querySelector("[_total_mg]");
-  let state = localStorage.getItem('_state');
-  if (state) {
-    try {
-      state = JSON.parse(state);
-    } catch(err) {
-      console.error("Error loading state: " + err);
-      throw err;
-    }
-  } else {
-    state = {
-      totalMg: 0,
-    };
-    localStorage.setItem("_state", JSON.stringify(state));
-  }
-  console.log({totalMg});
-})();</script>
+</div>
 
 
 </body>
