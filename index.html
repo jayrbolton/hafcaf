@@ -38,10 +38,7 @@
       throw err;
     }
   } else {
-    state = {
-      totalMg: 0,
-      
-    };
+    window._resetState();
     saveState();
   }
   // Initialize the _total_mg component
