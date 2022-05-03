@@ -48,6 +48,7 @@
   // Initialize the caffeine add button component
   const addCaffeineBtn = document.querySelector("[_add_caffeine_btn]");
   addCaffeineBtn.addEventListener('click', function (ev) {
-    console.log("clicky");
+    // Increment total mg by 5
+    setTotalMg(state.toalMg + 5);
   });
 })();</script></body>
