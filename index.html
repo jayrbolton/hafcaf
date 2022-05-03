@@ -43,6 +43,9 @@
   }
   // Initialize the _total_mg component
   const totalMgEl = document.querySelector("[_total_mg]");
+  function syncTotalMgEl () {
+    totalMgEl.textContent = window._state.totalMg + "mg";
+  }
   function consumeCaffeine(amount) {
     window._state.history.push({
       origAmount: amount,
