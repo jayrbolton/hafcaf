@@ -69,7 +69,7 @@
     const fiveHrs = 60 * 60 * 5 * 1000; 
     window._state.history = window._state.history.map((hist) => {
       const diff = Number(new Date()) - hist.time;
-      const reduction = (0.5 * diff) / fiveHrs;
+      const reduction = 1- ( (0.5 * diff) / fiveHrs);
       hist.currentAmount = hist.origAmount * reduction;
       console.log(`Reducing ${hist.origAmount} by ${reduction} to get ${hist.currentAmount}`);
       return hist;
