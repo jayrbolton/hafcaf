@@ -53,7 +53,7 @@
       time: Number(new Date()),
     });
     saveState();
-    totalMgEl.textContent = window._state.totalMg + "mg";
+    syncTotalMgEl();
   }
   function setTotalMg () {
     window._state.totalMg = window._state.history.reduce((sum, hist) => sum + hist.currentAmount, 0);
@@ -78,5 +78,6 @@
       return hist;
     });
     setTotalMg();
+    syncTotalMgEl();
   }, 3000);
 })();</script></body>
