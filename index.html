@@ -45,12 +45,15 @@
   const totalMgEl = document.querySelector("[_total_mg]");
   function consumeCaffeine(amount) {
     window._state.history.push({
-      amount,
+      origAmount: amount,
+      currentAmount: amount
       time: Number(new Date()),
     });
-    window._state.totalMg = window._state.history.reduce((sum, hist) => sum + hist.amount, 0);
     saveState();
     totalMgEl.textContent = window._state.totalMg + "mg";
+  }
+  function setTotalMg () {
+    window._state.totalMg = window._state.history.reduce((sum, hist) => sum + hist.currentAmount, 0);
   }
   consumeCaffeine(window._state.totalMg);
   // Initialize the caffeine add button component
@@ -61,7 +64,14 @@
   });
   // Decrement caffeine level based on half-life
   setInterval(function () {
+    // Given a half life of 5 hours, it degrades 0.001 every three minutes
+    const threeMinutes = 60 * 3 * 1000; // 3 minutes in ms
+    const fiveHrs = 60 * 60 * 5 * 1000; 
     window._state.history = window._state.history.map((hist) => {
+      const diff = Number(new Date()) - hist.time;
+      const reduction = (0.5 * diff) / fiveHrs;
+      hist.currentAmount = hist.origAmount * reduction;
     });
+    setTotalMg();
   }, 5000)
 })();</script></body>
