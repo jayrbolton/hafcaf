@@ -20,10 +20,7 @@
 
 
 <script type="text/javascript" _custom_script="">(function() {
-  let state = {
-    caffeineMg: 0,
-  };
-  const totalMg = document.querySelector("[_total_mg]");
+  const totalMgEl = document.querySelector("[_total_mg]");
   let state = localStorage.getItem('_state');
   if (state) {
     try {
@@ -38,5 +35,5 @@
     };
     localStorage.setItem("_state", JSON.stringify(state));
   }
-  console.log({totalMg});
+  console.log(state);
 })();</script></body>
