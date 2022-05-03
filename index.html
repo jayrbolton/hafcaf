@@ -44,15 +44,15 @@
   // Initialize the _total_mg component
   const totalMgEl = document.querySelector("[_total_mg]");
   function consumeCaffeine(amount) {
-    state.history.push({
+    window._state.history.push({
       amount,
       time: Number(new Date()),
     });
-    state.totalMg = state.history.reduce((sum, hist) => sum + hist.amount, 0);
+    window._state.totalMg = window._state.history.reduce((sum, hist) => sum + hist.amount, 0);
     saveState();
-    totalMgEl.textContent = state.totalMg + "mg";
+    totalMgEl.textContent = window._state.totalMg + "mg";
   }
-  consumeCaffeine(state.totalMg);
+  consumeCaffeine(window._state.totalMg);
   // Initialize the caffeine add button component
   const addCaffeineBtn = document.querySelector("[_add_caffeine_btn]");
   addCaffeineBtn.addEventListener('click', function (ev) {
