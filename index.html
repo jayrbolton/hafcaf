@@ -14,7 +14,7 @@
   
   <div style="text-align: center;padding: 2rem;">
 
-  <div style="font-size: 2.5rem;padding: 1rem;margin: 1rem;"><button style="background: #444;color: white;font-size: 2rem;padding: 1rem;border: 1px solid white;outline: none;cursor: pointer;" _add_caffeine_btn="">+ Record new caffeine consumption</button></div><div style="font-size: 2.5rem;padding: 1rem;">Current caffeine level:</div><div _total_mg="" style="font-size: 4rem;padding: 1rem;font-weight: bold;">9.989215833333333mg</div>
+  <div style="font-size: 2.5rem;padding: 1rem;margin: 1rem;"><button style="background: #444;color: white;font-size: 2rem;padding: 1rem;border: 1px solid white;outline: none;cursor: pointer;" _add_caffeine_btn="">+ Record new caffeine consumption</button></div><div style="font-size: 2.5rem;padding: 1rem;">Current caffeine level:</div><div _total_mg="" style="font-size: 4rem;padding: 1rem;font-weight: bold;">9.988382083333335mg</div>
 
 </div>
 
@@ -44,7 +44,7 @@
   // Initialize the _total_mg component
   const totalMgEl = document.querySelector("[_total_mg]");
   function syncTotalMgEl () {
-    totalMgEl.textContent = window._state.totalMg + "mg";
+    totalMgEl.textContent = Math.round(window._state.totalMg * 100) / 100 + "mg";
   }
   function consumeCaffeine(amount) {
     window._state.history.push({
@@ -73,7 +73,7 @@
     window._state.history = window._state.history.map((hist) => {
       const diff = Number(new Date()) - hist.time;
       const reduction = 1- ( (0.5 * diff) / fiveHrs);
-      hist.currentAmount = Math.round(hist.origAmount * reduction * 100) / 100;
+      hist.currentAmount = hist.origAmount * reduction;
       return hist;
     });
     setTotalMg();
