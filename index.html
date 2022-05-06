@@ -1,82 +1,36 @@
+<!DOCTYPE html>
+<html>
 <head>
-  <script type="text/javascript" src="monkeypatch.js"></script>
-<style type="text/css">
+  <title>hafcaf</title>
+  <link rel="stylesheet" href="style.css" type="text/css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
 
-  body {
-    background: #222;
-    font-family: Helvetica, Open Sans, sans-serif;
-    color: white;
-  }
-
-</style></head>
 <body>
-  
-  
-  <div style="text-align: center;padding: 2rem;">
 
-  <div style="font-size: 2.5rem;padding: 1rem;margin: 1rem;"><button style="background: #444;color: white;font-size: 2rem;padding: 1rem;border: 1px solid white;outline: none;cursor: pointer;" _add_caffeine_btn="">+ Record new caffeine consumption</button></div><div style="font-size: 2.5rem;padding: 1rem;">Current caffeine level:</div><div _total_mg="" style="font-size: 4rem;padding: 1rem;font-weight: bold;">74.52250519163664mg</div>
+  <div class='main'>
 
-</div>
+    <div>
+      <button class='btn' _on="click:clickAddCaf">
+        + Consume caffeine
+      </button>
+    </div>
 
+    <h2 style='margin-top: 3rem'>
+      Current level:
+    </h2>
 
-<script type="text/javascript" _custom_script="">(function() {
-  window._state = localStorage.getItem('_state');
-  function saveState() {
-    localStorage.setItem("_state", JSON.stringify(window._state));
-  }
-  window._resetState = function () {
-    window._state = {
-      totalMg: 0,
-      history: [],
-    };
-    localStorage.setItem("_state", JSON.stringify(window._state));
-  }
-  if (window._state) {
-    try {
-      window._state = JSON.parse(window._state);
-    } catch(err) {
-      console.error("Error loading state: " + err);
-      throw err;
-    }
-  } else {
-    window._resetState();
-  }
-  // Initialize the _total_mg component
-  const totalMgEl = document.querySelector("[_total_mg]");
-  function syncTotalMgEl () {
-    totalMgEl.textContent = window._state.totalMg + "mg";
-  }
-  function consumeCaffeine(amount) {
-    window._state.history.push({
-      origAmount: amount,
-      currentAmount: amount,
-      time: Number(new Date()),
-    });
-    saveState();
-    syncTotalMgEl();
-  }
-  function setTotalMg () {
-    window._state.totalMg = window._state.history.reduce((sum, hist) => sum + hist.currentAmount, 0);
-  }
-  consumeCaffeine(window._state.totalMg);
-  // Initialize the caffeine add button component
-  const addCaffeineBtn = document.querySelector("[_add_caffeine_btn]");
-  addCaffeineBtn.addEventListener('click', function (ev) {
-    // Increment total mg by 5
-    consumeCaffeine(5);
-  });
-  // Decrement caffeine level based on half-life
-  setInterval(function () {
-    // Given a half life of 5 hours, it degrades 0.001 every three minutes
-    const threeMinutes = 60 * 3 * 1000; // 3 minutes in ms
-    const fiveHrs = 60 * 60 * 5 * 1000; 
-    window._state.history = window._state.history.map((hist) => {
-      const diff = Number(new Date()) - hist.time;
-      const reduction = 1- ( (0.5 * diff) / fiveHrs);
-      hist.currentAmount = hist.origAmount * reduction;
-      return hist;
-    });
-    setTotalMg();
-    syncTotalMgEl();
-  }, 3000);
-})();</script></body>
+    <div _total_mg="" style="font-size: 4rem;padding: 1rem;font-weight: bold;">0mg</div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class='foot'>
+    <button class='btn btn--small' _on="click:clickReset">
+      Reset
+    </button>
+  </div>
+
+  <script type="module" src="index.js"></script>
+</body>
+</html>
