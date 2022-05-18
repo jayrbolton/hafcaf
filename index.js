@@ -42,7 +42,7 @@ function App () {
     TotalText(bus),
     ResetButton(bus, events),
   ]);
-  setInterval(() => {
+  function updateHalfLife() {
     const history = bus.vals.history.map(hist => {
       const now = (new Date()).getTime();
       const delta = now - hist.time;
@@ -54,9 +54,11 @@ function App () {
       );
       return hist;
     }).filter(hist => hist.currentAmount > 1);
-    bus.pub('history', history);
-    bus.pub('totalMg', calcTotal(history));
-  }, 1000)
+  bus.pub('history', history);
+   bus.pub('totalMg', calcTotal(history));
+  };
+  setInterval(() => updateHalfLife, 1000);
+  updateHalfLife();
   return {el, bus};
 }
 
