@@ -2,35 +2,19 @@
 <html>
 <head>
   <title>hafcaf</title>
-  <link rel="stylesheet" href="style.css" type="text/css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style type="text/css">
+    body {
+      background: #222;
+      color: white;
+      font-family: Helvetica, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
 </head>
-
 <body>
-
-  <div class='main'>
-
-    <div>
-      <button class='btn' _on="click:clickAddCaf">
-        + Consume caffeine
-      </button>
-    </div>
-
-    <h2 style='margin-top: 3rem'>
-      Current level:
-    </h2>
-
-    <div _total_mg="" style="font-size: 4rem;padding: 1rem;font-weight: bold;">0mg</div>
-
-  </div>
-
-  <!-- Footer -->
-  <div class='foot'>
-    <button class='btn btn--small' _on="click:clickReset">
-      Reset
-    </button>
-  </div>
-
   <script type="module" src="index.js"></script>
 </body>
 </html>

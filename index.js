@@ -1,112 +1,131 @@
-// Constants
-const APP_PREFIX = "hfcf"
-const STATE_LS_KEY = APP_PREFIX + "_state";
-const HALF_LIFE = 5;
+import { El, Bus } from "./vendor/uzu.js";
 
-// Message/data bus
-const bus = {
-    // Valid events/data
-    tick: { subs: [], val: null },
-    totalMg: { subs: [], val: 0 },
-    history: { subs: [], val: [] },
-    clickAddCaf: { subs: [], val: [] },
-    clickReset: { subs: [], val: []},
-    // Publish an event/data
-    pub (label, msg) {
-        if (!(label in this)) {
-            throw new Error(`Label ${label} does not exist in bus ${bus}`);
-        }
-        let newVal = msg;
-        if (typeof msg === "function") {
-            newVal = msg(bus[label].val);
-        }
-        bus[label].val = newVal;
-        bus[label].subs.forEach(callback => {
-            callback(newVal);
-        });
+const HALFLIFE = 5.6;
+
+function App () {
+  const bus = Bus({
+    totalMg: 0,
+    history: [],
+  }, {cache: '_hafcaf'});
+  const events = {
+    clickConsume: ev => {
+      const history = bus.vals.history;
+      history.push({
+        time: (new Date()).getTime(),
+        origAmount: 50,
+        currentAmount: 50,
+      });
+      bus.pub('history', history);
+      const totalMg = calcTotal(bus.vals.history);
+      bus.pub('totalMg', totalMg);
     },
-    sub (label, fn) {
-        if (!(label in this)) {
-            throw new Error(`Label ${label} does not exist in bus ${bus}`);
-        }
-        bus[label].subs.push(fn);
+    clickReset: ev => {
+      const confirmed = confirm("Are you sure you want to reset?");
+      if (confirmed) {
+        bus.pub('history', []);
+        bus.pub('totalMg', 0);
+      }
+    },
+  };
+  const el = El('div', {
+    style: {
+      margin: '0',
+      padding: '2rem 0',
+      textAlign: 'center',
+      maxWidth: '20rem',
+      margin: 0,
+      padding: 0,
     }
-};
-
-// Register a function that modifies the behavior of a dom element for a certain attribute name/val
-function register (attr, fn) {
-    const elems = document.querySelectorAll("[" + attr + "]");
-    elems.forEach((elem) => {
-        const val = elem.getAttribute(attr);
-        fn(val, elem);
-    });
+  }, [
+    ConsumeButton(bus, events),
+    El('h2', {}, ["Current level:"]),
+    TotalText(bus),
+    ResetButton(bus, events),
+  ]);
+  setInterval(() => {
+    const history = bus.vals.history.map(hist => {
+      const now = (new Date()).getTime();
+      const delta = now - hist.time;
+      const hours = delta / 1000 / 60 / 60;
+      hist.currentAmount = halfLife(
+        hist.origAmount,
+        hours,
+        HALFLIFE,
+      );
+      return hist;
+    }).filter(hist => hist.currentAmount > 1);
+    bus.pub('history', history);
+    bus.pub('totalMg', calcTotal(history));
+  }, 1000)
+  return {el, bus};
 }
 
-// Add event listeners into the dom
-// Example: <button _on="click:busEvent">
-register("_on", function (attrVal, el) {
-    const [eventName, label] = attrVal.split(":");
-    el.addEventListener(eventName, ev => {
-        bus.pub(label, ev);
-    });
-});
+function ConsumeButton(bus, events) {
+  const el = El('button', {
+    style: {
+      outline: 0,
+      border: '2px solid #ccc',
+      background: '#444',
+      fontSize: '1.2rem',
+      padding: '0.5rem 0.8rem',
+      color: 'white',
+      cursor: 'pointer',
+    },
+    on: {
+      click: ev => {
+        events.clickConsume();
+      }
+    }
+  }, [
+    '+ Consume caffeine'
+  ])
+  return el;
+}
 
-// Calculate total milligrams from across the histor:w
-// Cache history to localstorage
-bus.sub('history', (history) => {
-    const totalMg = history.reduce((sum, hist) => sum + hist.currentAmount, 0);
-    bus.pub('totalMg', totalMg);
-    localStorage.setItem(STATE_LS_KEY, JSON.stringify({ history }));
-});
+function ResetButton (bus, events) {
+  const el = El('button', {
+    on: {
+      click: events.clickReset,
+    },
+    style: {
+      outline: 0,
+      border: '2px solid #ccc',
+      background: '#444',
+      fontSize: '1rem',
+      padding: '0.5rem 0.8rem',
+      color: 'white',
+      cursor: 'pointer',
+      marginTop: "2rem",
+    },
+  }, [
+    "Reset",
+  ]);
+  return el;
+}
 
-bus.sub('tick', () => {
-    bus.pub('history', (hist) => {
-        // Decrement each entry in history
-        // filter out entries <= 0
-        // publish totalMg amount
-        return hist.map(each => {
-            if (each.currentAmount <= 10) {
-                each.currentAmount = 0;
-            } else {
-                const delta = Number(new Date()) - each.time;
-                const hours = delta / 1000 / 60 / 60;
-                each.currentAmount = halfLife(each.origAmount, hours, HALF_LIFE);
-            }
-            return each;
-        }).filter(each => each.currentAmount >= 0);
-    });
-});
+function TotalText (bus) {
+  const totalText = (n) => {
+    return n.toFixed(1) + "mg";
+  }
+  const el = El('h1', {
+    style: {
+      fontSize: "3rem",
+    }
+  }, [totalText(bus.vals.totalMg)]);
+  bus.sub('totalMg', totalMg => {
+    el.textContent = totalText(bus.vals.totalMg);
+  })
+  return el;
+}
 
-setInterval(() => bus.pub('tick'), 3000);
-
-const totalMgEl = document.querySelector('[_total_mg]');
-
-bus.sub('clickAddCaf', (ev) => {
-    bus.pub('history', history => {
-        history.push({
-            currentAmount: 50,
-            origAmount: 50,
-            time: Number(new Date()),
-        });
-        return history;
-    });
-});
-
-bus.sub('clickReset', (ev) => {
-    bus.pub('history', []);
-});
-
-bus.sub('totalMg', (total) => {
-    totalMgEl.textContent = total.toFixed(1) + 'mg';
-});
+function calcTotal (history) {
+  return history.reduce((sum, hist) => sum + hist.currentAmount, 0);
+}
 
 function halfLife (amount, hours, rate) {
-    return amount * (0.5 ** (hours / rate));
+  return amount * (0.5 ** (hours / rate));
 }
 
-// On pageload, load state from localStorage
-const cachedStateStr = localStorage.getItem(STATE_LS_KEY);
-if (cachedStateStr) {
-    const cachedState = JSON.parse(cachedStateStr);
-    bus.pub('history', cachedState.history);
-}
+const app = App();
+window._bus = app.bus;
+document.body.appendChild(app.el);
